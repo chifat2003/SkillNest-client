@@ -36,10 +36,10 @@ export default function Navbar() {
 
         {/* Auth Buttons */}
         <div className="navbar-auth">
-          <Link href="/login" id="btn-login" className="btn-login">
+          <Link href="auth/login" id="btn-login" className="btn-login">
             Log In
           </Link>
-          <Link href="/signup" id="btn-signup" className="btn-signup">
+          <Link href="auth/signup" id="btn-signup" className="btn-signup">
             Sign Up
           </Link>
         </div>
