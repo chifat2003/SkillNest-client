@@ -8,13 +8,13 @@ const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface Stats {
   totalProposals: number;
-  pendingProposals: number;
-  sentInvitations: number;
+  activeProposals: number;
+  pendingInvitations: number;
 }
 
-function ClientDashboardContent() {
+function FreelancerDashboardContent() {
   const [user, setUser] = useState<{ fullName: string; email: string } | null>(null);
-  const [stats, setStats] = useState<Stats>({ totalProposals: 0, pendingProposals: 0, sentInvitations: 0 });
+  const [stats, setStats] = useState<Stats>({ totalProposals: 0, activeProposals: 0, pendingInvitations: 0 });
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -36,15 +36,15 @@ function ClientDashboardContent() {
           setStats((prev) => ({
             ...prev,
             totalProposals: proposalsData.pagination?.total ?? proposals.length,
-            pendingProposals: proposals.filter((p: { status: string }) =>
-              ["Submitted", "Viewed"].includes(p.status)
+            activeProposals: proposals.filter((p: { status: string }) =>
+              ["Submitted", "Viewed", "Shortlisted", "Interview"].includes(p.status)
             ).length,
           }));
         }
         if (invitationsData.success) {
           setStats((prev) => ({
             ...prev,
-            sentInvitations: invitationsData.pagination?.total ?? invitationsData.data.length,
+            pendingInvitations: invitationsData.data.filter((i: { status: string }) => i.status === "Pending").length,
           }));
         }
       } catch { /* ignore */ }
@@ -54,14 +54,14 @@ function ClientDashboardContent() {
   }, []);
 
   const cards = [
-    { label: "Total Proposals", value: stats.totalProposals, href: "/dashboard/client/proposals", color: "from-[#7c6aff] to-[#9b8dff]" },
-    { label: "Pending Review", value: stats.pendingProposals, href: "/dashboard/client/proposals?status=Submitted", color: "from-[#ff6a9e] to-[#ff8fbd]" },
-    { label: "Invitations Sent", value: stats.sentInvitations, href: "/dashboard/client/invitations", color: "from-[#06b6d4] to-[#22d3ee]" },
+    { label: "Total Proposals", value: stats.totalProposals, href: "/dashboard/freelancer/proposals", color: "from-[#7c6aff] to-[#9b8dff]" },
+    { label: "Active Proposals", value: stats.activeProposals, href: "/dashboard/freelancer/proposals", color: "from-[#ff6a9e] to-[#ff8fbd]" },
+    { label: "Pending Invitations", value: stats.pendingInvitations, href: "/dashboard/freelancer/invitations", color: "from-[#06b6d4] to-[#22d3ee]" },
   ];
 
   const quickLinks = [
-    { label: "Review Proposals", href: "/dashboard/client/proposals", icon: "📋" },
-    { label: "Manage Invitations", href: "/dashboard/client/invitations", icon: "✉️" },
+    { label: "My Proposals", href: "/dashboard/freelancer/proposals", icon: "📋" },
+    { label: "Invitations", href: "/dashboard/freelancer/invitations", icon: "✉️" },
   ];
 
   return (
@@ -73,7 +73,7 @@ function ClientDashboardContent() {
           <h1 className="text-2xl font-bold">
             Welcome back{user?.fullName ? `, ${user.fullName.split(" ")[0]}` : ""} 👋
           </h1>
-          <p className="text-[#9090aa] text-sm mt-1">Manage your projects and hire the right talent.</p>
+          <p className="text-[#9090aa] text-sm mt-1">Here&apos;s what&apos;s happening with your freelance work.</p>
         </div>
 
         {/* Stats */}
@@ -112,10 +112,10 @@ function ClientDashboardContent() {
   );
 }
 
-export default function ClientDashboard() {
+export default function FreelancerDashboard() {
   return (
-    <ProtectedRoute allowedRoles={["Client"]}>
-      <ClientDashboardContent />
+    <ProtectedRoute allowedRoles={["Freelancer"]}>
+      <FreelancerDashboardContent />
     </ProtectedRoute>
   );
 }
