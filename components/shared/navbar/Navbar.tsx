@@ -30,13 +30,19 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-8 px-6">
-        
+    <header
+      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+        scrolled
+          ? "border-white/10 bg-[#0a0a0f]/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+          : "border-transparent bg-transparent"
+      }`}
+    >
+      <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-6 px-6">
+
         {/* Logo */}
-        <Link 
-          href="/" 
-          id="navbar-logo" 
+        <Link
+          href="/"
+          id="navbar-logo"
           className="flex items-center gap-2 flex-shrink-0 transition-opacity hover:opacity-85"
         >
           <span className="text-2xl drop-shadow-[0_0_10px_rgba(124,106,255,0.8)]">⚡</span>
@@ -46,14 +52,14 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center justify-center gap-1 flex-1" aria-label="Main navigation">
+        <nav className="hidden lg:flex items-center justify-center gap-0.5 flex-1" aria-label="Main navigation">
           {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = pathname === link.href || (link.href === "/" && pathname === "/");
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                id={`nav-link-${link.label.toLowerCase()}`}
+                id={`nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isActive
                     ? "text-white bg-[#7c6aff]/10"
@@ -61,10 +67,9 @@ export default function Navbar() {
                 }`}
               >
                 {link.label}
-                {/* Gradient active/hover underline */}
                 <span
                   className={`absolute -bottom-[1px] left-1/2 h-[2px] w-[60%] -translate-x-1/2 rounded-full bg-gradient-to-r from-[#7c6aff] to-[#ff6a9e] transition-transform duration-300 ease-out ${
-                    isActive ? "scale-x-100" : "scale-x-0 hover:scale-x-100"
+                    isActive ? "scale-x-100" : "scale-x-0"
                   }`}
                 />
               </Link>
@@ -113,44 +118,32 @@ export default function Navbar() {
         {/* Mobile Hamburger Toggle */}
         <button
           id="navbar-menu-toggle"
-          className="md:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded-md hover:bg-white/10 transition-colors"
+          className="lg:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded-md hover:bg-white/10 transition-colors"
           aria-label="Toggle menu"
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((prev) => !prev)}
         >
-          <span
-            className={`block h-[2px] w-5 rounded-full bg-white transition-transform duration-300 ${
-              menuOpen ? "translate-y-[7px] rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`block h-[2px] w-5 rounded-full bg-white transition-opacity duration-300 ${
-              menuOpen ? "opacity-0" : "opacity-100"
-            }`}
-          />
-          <span
-            className={`block h-[2px] w-5 rounded-full bg-white transition-transform duration-300 ${
-              menuOpen ? "-translate-y-[9px] -rotate-45" : ""
-            }`}
-          />
+          <span className={`block h-[2px] w-5 rounded-full bg-white transition-transform duration-300 ${menuOpen ? "translate-y-[7px] rotate-45" : ""}`} />
+          <span className={`block h-[2px] w-5 rounded-full bg-white transition-opacity duration-300 ${menuOpen ? "opacity-0" : "opacity-100"}`} />
+          <span className={`block h-[2px] w-5 rounded-full bg-white transition-transform duration-300 ${menuOpen ? "-translate-y-[9px] -rotate-45" : ""}`} />
         </button>
       </div>
 
       {/* Mobile Menu Dropdown */}
       <div
-        className={`md:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${
-          menuOpen ? "max-h-96 opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
+        className={`lg:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${
+          menuOpen ? "max-h-[600px] opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
         }`}
         aria-hidden={!menuOpen}
       >
-        <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
+        <nav className="flex flex-col gap-1 mb-4" aria-label="Mobile navigation">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                id={`mobile-nav-link-${link.label.toLowerCase()}`}
+                id={`mobile-nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
                   isActive
                     ? "text-white bg-[#7c6aff]/10"
