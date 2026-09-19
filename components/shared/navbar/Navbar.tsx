@@ -10,6 +10,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<{ role: string; fullName: string } | null>(null);
 
   useEffect(() => {
@@ -18,6 +19,12 @@ export default function Navbar() {
       try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
     }
   }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const dashboardHref = user?.role === "Client" ? "/dashboard/client" : "/dashboard/freelancer";
 
