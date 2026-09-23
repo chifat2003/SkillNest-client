@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -52,7 +52,7 @@ interface Contract {
   freelancer?: { fullName: string };
 }
 
-export default function ReviewForm() {
+function ReviewFormInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const contractIdParam = searchParams.get("contractId");
@@ -311,5 +311,19 @@ export default function ReviewForm() {
         </div>
       </div>
     </main>
+  );
+}
+
+const Spinner = () => (
+  <div className="min-h-screen bg-[#08080d] flex items-center justify-center">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#7c6aff]" />
+  </div>
+);
+
+export default function ReviewForm() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <ReviewFormInner />
+    </Suspense>
   );
 }

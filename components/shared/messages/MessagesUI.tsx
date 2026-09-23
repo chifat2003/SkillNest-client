@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { FaPaperPlane, FaComments } from "react-icons/fa";
@@ -39,7 +39,7 @@ function timeAgo(date: string) {
   return new Date(date).toLocaleDateString();
 }
 
-export default function MessagesUI() {
+function MessagesUIInner() {
   const searchParams = useSearchParams();
   const [me, setMe] = useState<{ id: string } | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -244,5 +244,19 @@ export default function MessagesUI() {
         </div>
       </div>
     </main>
+  );
+}
+
+const Spinner = () => (
+  <div className="min-h-screen bg-[#08080d] flex items-center justify-center">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#7c6aff]" />
+  </div>
+);
+
+export default function MessagesUI() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <MessagesUIInner />
+    </Suspense>
   );
 }
