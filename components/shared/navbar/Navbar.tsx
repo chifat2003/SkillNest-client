@@ -28,24 +28,43 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState<NavbarUser | null>(() => readStoredUser());
+  const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<{ role: string; fullName: string } | null>(null);
 
-  const dashboardHref = useMemo(() => {
-    const role = user?.role || user?.userType;
-    return role === "Client" ? "/dashboard/client" : "/dashboard/freelancer";
-  }, [user]);
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const dashboardHref = user?.role === "Client" ? "/dashboard/client" : "/dashboard/freelancer";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    toast.success("Logged out successfully.");
-    router.push("/auth/login");
+    toast.success("Logged out.");
+    router.push("/");
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+        scrolled
+          ? "border-white/10 bg-[#0a0a0f]/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+          : "border-transparent bg-[#0a0a0f]/80 backdrop-blur-xl"
+      }`}
+    >
       <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-8 px-6">
+
+        {/* Logo */}
         <Link
           href="/"
           id="navbar-logo"
@@ -59,8 +78,7 @@ export default function Navbar() {
 
         <nav className="hidden lg:flex items-center justify-center gap-0.5 flex-1" aria-label="Main navigation">
           {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href || (link.href === "/" && pathname === "/");
-
+            const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
