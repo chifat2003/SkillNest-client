@@ -2,9 +2,27 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { NAV_LINKS } from "@/constants/navlinks";
+
+type NavbarUser = {
+  role?: string;
+  userType?: string;
+};
+
+const readStoredUser = (): NavbarUser | null => {
+  if (typeof window === "undefined") return null;
+
+  const stored = localStorage.getItem("user");
+  if (!stored) return null;
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+};
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -58,7 +76,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav Links */}
         <nav className="hidden lg:flex items-center justify-center gap-0.5 flex-1" aria-label="Main navigation">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
@@ -84,7 +101,6 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-3 flex-shrink-0">
           {user ? (
             <>
@@ -122,7 +138,6 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Hamburger Toggle */}
         <button
           id="navbar-menu-toggle"
           className="lg:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded-md hover:bg-white/10 transition-colors"
@@ -136,7 +151,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       <div
         className={`lg:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${
           menuOpen ? "max-h-[600px] opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
@@ -146,6 +160,7 @@ export default function Navbar() {
         <nav className="flex flex-col gap-1 mb-4" aria-label="Mobile navigation">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
+
             return (
               <Link
                 key={link.href}
@@ -176,7 +191,10 @@ export default function Navbar() {
                 Dashboard
               </Link>
               <button
-                onClick={() => { setMenuOpen(false); handleLogout(); }}
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogout();
+                }}
                 className="flex-1 py-2.5 text-center text-sm font-medium text-[#9090aa] rounded-lg border border-white/10 hover:text-white hover:bg-white/5 transition-colors"
               >
                 Log Out
