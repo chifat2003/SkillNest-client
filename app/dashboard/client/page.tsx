@@ -17,12 +17,12 @@ function ClientDashboardContent() {
   const [stats, setStats] = useState<Stats>({ totalProposals: 0, pendingProposals: 0, sentInvitations: 0 });
 
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
-    }
+    void Promise.resolve().then(async () => {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+      }
 
-    const fetchStats = async () => {
       try {
         const token = localStorage.getItem("token");
         const [proposalsRes, invitationsRes] = await Promise.all([
@@ -31,26 +31,19 @@ function ClientDashboardContent() {
         ]);
         const [proposalsData, invitationsData] = await Promise.all([proposalsRes.json(), invitationsRes.json()]);
 
-        if (proposalsData.success) {
-          const proposals = proposalsData.data;
-          setStats((prev) => ({
-            ...prev,
-            totalProposals: proposalsData.pagination?.total ?? proposals.length,
-            pendingProposals: proposals.filter((p: { status: string }) =>
-              ["Submitted", "Viewed"].includes(p.status)
-            ).length,
-          }));
-        }
-        if (invitationsData.success) {
-          setStats((prev) => ({
-            ...prev,
-            sentInvitations: invitationsData.pagination?.total ?? invitationsData.data.length,
-          }));
-        }
+        setStats({
+          totalProposals: proposalsData.success
+            ? proposalsData.pagination?.total ?? proposalsData.data.length
+            : 0,
+          pendingProposals: proposalsData.success
+            ? proposalsData.data.filter((p: { status: string }) => ["Submitted", "Viewed"].includes(p.status)).length
+            : 0,
+          sentInvitations: invitationsData.success
+            ? invitationsData.pagination?.total ?? invitationsData.data.length
+            : 0,
+        });
       } catch { /* ignore */ }
-    };
-
-    fetchStats();
+    });
   }, []);
 
   const cards = [
