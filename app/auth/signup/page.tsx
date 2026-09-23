@@ -209,7 +209,7 @@ export default function SignupPage() {
                   {agreedToTerms && "✓"}
                 </span>
                 <span className="leading-normal text-[11px]">
-                  I agree to SkillNest's{" "}
+                  I agree to SkillNest&apos;s{" "}
                   <Link href="/terms" className="text-[#7c6aff] hover:underline">
                     Terms of Service
                   </Link>{" "}

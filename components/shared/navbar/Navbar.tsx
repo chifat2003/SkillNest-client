@@ -11,14 +11,17 @@ export default function Navbar() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<{ role: string; fullName: string } | null>(null);
-
-  useEffect(() => {
+  const [user, setUser] = useState<{ role: string; fullName: string } | null>(() => {
+    if (typeof window === "undefined") return null;
     const stored = localStorage.getItem("user");
-    if (stored) {
-      try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+    if (!stored) return null;
+
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return null;
     }
-  }, [pathname]);
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
