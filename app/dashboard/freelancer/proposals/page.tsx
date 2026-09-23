@@ -47,7 +47,9 @@ function MyProposalsList() {
     }
   };
 
-  useEffect(() => { fetchProposals(); }, []);
+  useEffect(() => {
+    void Promise.resolve().then(fetchProposals);
+  }, []);
 
   const handleWithdraw = async (id: string) => {
     if (!confirm("Withdraw this proposal?")) return;

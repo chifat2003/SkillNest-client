@@ -53,7 +53,9 @@ function ClientProposalDashboard() {
     }
   };
 
-  useEffect(() => { fetchProposals(activeTab); }, [activeTab]);
+  useEffect(() => {
+    void Promise.resolve().then(() => fetchProposals(activeTab));
+  }, [activeTab]);
 
   const doAction = async (id: string, action: string) => {
     if (action === "accept" && !confirm("Accept this proposal? A contract will be created automatically.")) return;
