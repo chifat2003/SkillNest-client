@@ -70,7 +70,7 @@ export default function LoginPage() {
   return (
     <main className="min-h-[calc(100vh-68px)] px-4 py-10 flex items-center justify-center bg-[radial-gradient(circle_at_10%_20%,rgba(124,106,255,0.08),transparent_35%),radial-gradient(circle_at_90%_80%,rgba(255,106,158,0.06),transparent_35%),#08080d]">
       <div className="w-full max-w-[1180px] min-h-[680px] grid grid-cols-1 lg:grid-cols-2 overflow-hidden bg-[#13131a] border border-white/10 rounded-3xl shadow-[0_25px_80px_rgba(0,0,0,0.45),0_0_50px_rgba(124,106,255,0.05)]">
-        
+
         {/* ───────────── Left: Login Form ───────────── */}
         <section className="flex items-center px-6 py-10 sm:px-10 md:px-16 bg-[radial-gradient(circle_at_0%_0%,rgba(124,106,255,0.07),transparent_35%),#0d0d14]">
           <div className="w-full max-w-[470px] mx-auto">
@@ -87,7 +87,7 @@ export default function LoginPage() {
 
             {/* Login Form */}
             <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-              
+
               {/* Email */}
               <div className="flex flex-col gap-2">
                 <label htmlFor="email" className="text-white text-sm font-medium">
@@ -151,11 +151,10 @@ export default function LoginPage() {
                   className="sr-only"
                 />
                 <span
-                  className={`flex items-center justify-center w-4 h-4 border rounded text-xs transition-all ${
-                    rememberMe
+                  className={`flex items-center justify-center w-4 h-4 border rounded text-xs transition-all ${rememberMe
                       ? "bg-[#7c6aff] border-[#7c6aff] text-white shadow-[0_0_12px_rgba(124,106,255,0.35)]"
                       : "bg-[#101018] border-white/20"
-                  }`}
+                    }`}
                 >
                   {rememberMe && "✓"}
                 </span>
@@ -180,12 +179,13 @@ export default function LoginPage() {
             </div>
 
             {/* Social Login */}
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 type="button"
                 className="flex items-center justify-center gap-2.5 py-3 px-4 text-white text-sm font-medium bg-[#101018] border border-white/10 rounded-xl hover:bg-[#15151f] hover:border-white/20 hover:-translate-y-0.5 transition-all"
                 onClick={() => {
-                  window.location.href = `${API_BASE_URL}/api/auth/google`;
+                  window.location.href = `${API_BASE_URL}/api/auth/google?role=Freelancer`;
                 }}
               >
                 <FaGoogle className="text-[#4285f4] text-base" />
