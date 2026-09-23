@@ -48,12 +48,15 @@ function ClientDashboardContent() {
         const [projectsData, proposalsData, invitationsData, contractsData] = await Promise.all([
           projectsRes.json(), proposalsRes.json(), invitationsRes.json(), contractsRes.json(),
         ]);
-        const [proposalsData, invitationsData] = await Promise.all([proposalsRes.json(), invitationsRes.json()]);
+
+        const projects: { status: string }[] = projectsData.success ? projectsData.data : [];
+        const contracts: { status: string; amount: number }[] = contractsData.success ? contractsData.data : [];
 
         setStats({
-          totalProposals: proposalsData.success
-            ? proposalsData.pagination?.total ?? proposalsData.data.length
-            : 0,
+          totalProjects: projectsData.success ? (projectsData.pagination?.total ?? projects.length) : 0,
+          draftProjects: projects.filter((p) => p.status === "Draft").length,
+          activeContracts: contracts.filter((c) => c.status === "Active").length,
+          totalSpending: contracts.filter((c) => c.status === "Completed").reduce((s, c) => s + (c.amount || 0), 0),
           pendingProposals: proposalsData.success
             ? proposalsData.data.filter((p: { status: string }) => ["Submitted", "Viewed"].includes(p.status)).length
             : 0,
