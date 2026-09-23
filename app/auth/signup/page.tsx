@@ -68,7 +68,7 @@ export default function SignupPage() {
   return (
     <main className="min-h-[calc(100vh-68px)] px-4 py-10 flex items-center justify-center bg-[radial-gradient(circle_at_10%_20%,rgba(124,106,255,0.08),transparent_35%),radial-gradient(circle_at_90%_80%,rgba(255,106,158,0.06),transparent_35%),#08080d]">
       <div className="w-full max-w-[1180px] min-h-[680px] grid grid-cols-1 lg:grid-cols-2 overflow-hidden bg-[#13131a] border border-white/10 rounded-3xl shadow-[0_25px_80px_rgba(0,0,0,0.45),0_0_50px_rgba(124,106,255,0.05)]">
-        
+
         {/* ───────────── Left: Sign Up Form ───────────── */}
         <section className="flex items-center px-6 py-10 sm:px-10 md:px-16 bg-[radial-gradient(circle_at_0%_0%,rgba(124,106,255,0.07),transparent_35%),#0d0d14]">
           <div className="w-full max-w-[470px] mx-auto">
@@ -76,7 +76,7 @@ export default function SignupPage() {
             {/* Heading */}
             <div className="mb-5">
               <h1 className="mb-1.5 text-white text-3xl font-bold tracking-tight leading-tight">
-                Create an account 
+                Create an account
               </h1>
               <p className="text-[#9090aa] text-sm leading-relaxed">
                 Join thousands of freelancers and clients on SkillNest.
@@ -85,7 +85,7 @@ export default function SignupPage() {
 
             {/* Sign Up Form */}
             <form className="flex flex-col gap-3.5" onSubmit={handleSubmit}>
-              
+
               {/* Role Selection */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-white text-xs font-medium">I want to join as a</label>
@@ -93,22 +93,20 @@ export default function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setRole("Freelancer")}
-                    className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all ${
-                      role === "Freelancer"
+                    className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all ${role === "Freelancer"
                         ? "bg-[#7c6aff]/15 border-[#7c6aff] text-white shadow-[0_0_15px_rgba(124,106,255,0.2)]"
                         : "bg-[#101018] border-white/10 text-[#9090aa] hover:border-white/20"
-                    }`}
+                      }`}
                   >
                     🛠️ Freelancer
                   </button>
                   <button
                     type="button"
                     onClick={() => setRole("Client")}
-                    className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all ${
-                      role === "Client"
+                    className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all ${role === "Client"
                         ? "bg-[#7c6aff]/15 border-[#7c6aff] text-white shadow-[0_0_15px_rgba(124,106,255,0.2)]"
                         : "bg-[#101018] border-white/10 text-[#9090aa] hover:border-white/20"
-                    }`}
+                      }`}
                   >
                     💼 Client
                   </button>
@@ -200,11 +198,10 @@ export default function SignupPage() {
                   className="sr-only"
                 />
                 <span
-                  className={`mt-0.5 flex items-center justify-center min-w-[16px] h-4 border rounded text-[10px] transition-all ${
-                    agreedToTerms
+                  className={`mt-0.5 flex items-center justify-center min-w-[16px] h-4 border rounded text-[10px] transition-all ${agreedToTerms
                       ? "bg-[#7c6aff] border-[#7c6aff] text-white shadow-[0_0_12px_rgba(124,106,255,0.35)]"
                       : "bg-[#101018] border-white/20"
-                  }`}
+                    }`}
                 >
                   {agreedToTerms && "✓"}
                 </span>
@@ -243,8 +240,8 @@ export default function SignupPage() {
                 type="button"
                 className="flex items-center justify-center gap-2 py-2.5 px-3 text-white text-xs font-medium bg-[#101018] border border-white/10 rounded-xl hover:bg-[#15151f] hover:border-white/20 hover:-translate-y-0.5 transition-all"
                 onClick={() => {
-                  window.location.href = `${API_BASE_URL}/api/auth/google`;
-                }}
+                  window.location.href = `${API_BASE_URL}/api/auth/google?role=${role}`;
+                }} 
               >
                 <FaGoogle className="text-[#4285f4] text-sm" />
                 <span>Google</span>
