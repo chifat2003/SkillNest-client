@@ -10,11 +10,42 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<{ role: string; fullName: string } | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const dashboardHref = user?.role === "Client" ? "/dashboard/client" : "/dashboard/freelancer";
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    toast.success("Logged out.");
+    router.push("/");
+  };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+        scrolled
+          ? "border-white/10 bg-[#0a0a0f]/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+          : "border-transparent bg-[#0a0a0f]/80 backdrop-blur-xl"
+      }`}
+    >
       <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-8 px-6">
-        
+
         {/* Logo */}
         <Link
           href="/"
@@ -30,32 +61,23 @@ export default function Navbar() {
         {/* Desktop Nav Links */}
         <nav className="hidden lg:flex items-center justify-center gap-0.5 flex-1" aria-label="Main navigation">
           {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href || (link.href === "/" && pathname === "/");
+            const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                id={`nav-link-${link.label.toLowerCase()}`}
+                id={`nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isActive
-=======
-                id={`nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-                className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${isActive
->>>>>>> Stashed changes
                     ? "text-white bg-[#7c6aff]/10"
                     : "text-[#9090aa] hover:text-white hover:bg-white/5"
-                  }`}
+                }`}
               >
                 {link.label}
                 <span
-<<<<<<< Updated upstream
                   className={`absolute -bottom-[1px] left-1/2 h-[2px] w-[60%] -translate-x-1/2 rounded-full bg-gradient-to-r from-[#7c6aff] to-[#ff6a9e] transition-transform duration-300 ease-out ${
                     isActive ? "scale-x-100" : "scale-x-0"
                   }`}
-=======
-                  className={`absolute -bottom-[1px] left-1/2 h-[2px] w-[60%] -translate-x-1/2 rounded-full bg-gradient-to-r from-[#7c6aff] to-[#ff6a9e] transition-transform duration-300 ease-out ${isActive ? "scale-x-100" : "scale-x-0"
-                    }`}
->>>>>>> Stashed changes
                 />
               </Link>
             );
@@ -116,13 +138,9 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       <div
-        className={`md:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${
-          menuOpen ? "max-h-96 opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
+        className={`lg:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${
+          menuOpen ? "max-h-[600px] opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
         }`}
-=======
-        className={`lg:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${menuOpen ? "max-h-[600px] opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
-          }`}
->>>>>>> Stashed changes
         aria-hidden={!menuOpen}
       >
         <nav className="flex flex-col gap-1 mb-4" aria-label="Mobile navigation">
@@ -132,16 +150,12 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                id={`mobile-nav-link-${link.label.toLowerCase()}`}
+                id={`mobile-nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
                   isActive
-=======
-                id={`mobile-nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-                className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${isActive
->>>>>>> Stashed changes
                     ? "text-white bg-[#7c6aff]/10"
                     : "text-[#9090aa] hover:text-white hover:bg-white/5"
-                  }`}
+                }`}
                 onClick={() => setMenuOpen(false)}
               >
                 {link.label}
