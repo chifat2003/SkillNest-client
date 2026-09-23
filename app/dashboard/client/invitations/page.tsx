@@ -45,7 +45,9 @@ function ClientInvitationsView() {
     }
   };
 
-  useEffect(() => { fetchInvitations(); }, []);
+  useEffect(() => {
+    void Promise.resolve().then(fetchInvitations);
+  }, []);
 
   const handleSend = async (e: FormEvent) => {
     e.preventDefault();
