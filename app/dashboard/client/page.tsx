@@ -48,29 +48,20 @@ function ClientDashboardContent() {
         const [projectsData, proposalsData, invitationsData, contractsData] = await Promise.all([
           projectsRes.json(), proposalsRes.json(), invitationsRes.json(), contractsRes.json(),
         ]);
-
-        const projects: { status: string }[] = projectsData.success ? projectsData.data : [];
-        const proposals: { status: string }[] = proposalsData.success ? proposalsData.data : [];
-        const contracts: { status: string; amount: number; milestones?: { status: string; amount: number }[] }[] =
-          contractsData.success ? contractsData.data : [];
-
-        const totalSpending = contracts
-          .filter((c) => c.status === "Completed")
-          .reduce((sum, c) => sum + (c.amount || 0), 0);
+        const [proposalsData, invitationsData] = await Promise.all([proposalsRes.json(), invitationsRes.json()]);
 
         setStats({
-          totalProjects: projectsData.success ? (projectsData.pagination?.total ?? projects.length) : 0,
-          draftProjects: projects.filter((p) => p.status === "Draft").length,
-          activeContracts: contracts.filter((c) => c.status === "Active").length,
-          pendingProposals: proposals.filter((p) => ["Submitted", "Viewed"].includes(p.status)).length,
-          sentInvitations: invitationsData.success
-            ? (invitationsData.pagination?.total ?? invitationsData.data.length)
+          totalProposals: proposalsData.success
+            ? proposalsData.pagination?.total ?? proposalsData.data.length
             : 0,
-          totalSpending,
+          pendingProposals: proposalsData.success
+            ? proposalsData.data.filter((p: { status: string }) => ["Submitted", "Viewed"].includes(p.status)).length
+            : 0,
+          sentInvitations: invitationsData.success
+            ? invitationsData.pagination?.total ?? invitationsData.data.length
+            : 0,
         });
-      } catch { /* ignore */ } finally {
-        setLoading(false);
-      }
+      } catch { /* ignore */ }
     });
   }, []);
 

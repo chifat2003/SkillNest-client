@@ -45,30 +45,22 @@ function FreelancerDashboardContent() {
         const [proposalsData, invitationsData, contractsData] = await Promise.all([
           proposalsRes.json(), invitationsRes.json(), contractsRes.json(),
         ]);
-
-        const proposals: { status: string }[] = proposalsData.success ? proposalsData.data : [];
-        const invitations: { status: string }[] = invitationsData.success ? invitationsData.data : [];
-        const contracts: { status: string; milestones?: { status: string; amount: number; funded: boolean }[] }[] =
-          contractsData.success ? contractsData.data : [];
-
-        // Sum approved/released milestone amounts as available balance proxy
-        const available = contracts.reduce((sum, c) => {
-          const releasedMilestones = c.milestones?.filter((m) => m.status === "Completed") ?? [];
-          return sum + releasedMilestones.reduce((s, m) => s + (m.amount * 0.9), 0); // after 10% fee
-        }, 0);
+        const [proposalsData, invitationsData] = await Promise.all([proposalsRes.json(), invitationsRes.json()]);
 
         setStats({
-          totalProposals: proposalsData.success ? (proposalsData.pagination?.total ?? proposals.length) : 0,
-          activeProposals: proposals.filter((p) =>
-            ["Submitted", "Viewed", "Shortlisted", "Interview"].includes(p.status)
-          ).length,
-          pendingInvitations: invitations.filter((i) => i.status === "Pending").length,
-          activeContracts: contracts.filter((c) => c.status === "Active").length,
-          availableBalance: available,
+          totalProposals: proposalsData.success
+            ? proposalsData.pagination?.total ?? proposalsData.data.length
+            : 0,
+          activeProposals: proposalsData.success
+            ? proposalsData.data.filter((p: { status: string }) =>
+                ["Submitted", "Viewed", "Shortlisted", "Interview"].includes(p.status)
+              ).length
+            : 0,
+          pendingInvitations: invitationsData.success
+            ? invitationsData.data.filter((i: { status: string }) => i.status === "Pending").length
+            : 0,
         });
-      } catch { /* ignore */ } finally {
-        setLoading(false);
-      }
+      } catch { /* ignore */ }
     });
   }, []);
 
