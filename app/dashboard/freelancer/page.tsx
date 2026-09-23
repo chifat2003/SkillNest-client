@@ -45,7 +45,6 @@ function FreelancerDashboardContent() {
         const [proposalsData, invitationsData, contractsData] = await Promise.all([
           proposalsRes.json(), invitationsRes.json(), contractsRes.json(),
         ]);
-        const [proposalsData, invitationsData] = await Promise.all([proposalsRes.json(), invitationsRes.json()]);
 
         setStats({
           totalProposals: proposalsData.success
@@ -58,6 +57,15 @@ function FreelancerDashboardContent() {
             : 0,
           pendingInvitations: invitationsData.success
             ? invitationsData.data.filter((i: { status: string }) => i.status === "Pending").length
+            : 0,
+          activeContracts: contractsData.success
+            ? contractsData.data.filter((c: { status: string }) => c.status === "Active").length
+            : 0,
+          availableBalance: contractsData.success
+            ? contractsData.data.reduce((sum: number, c: { status: string; milestones?: { status: string; amount: number }[] }) => {
+                const released = (c.milestones ?? []).filter((m) => m.status === "Completed");
+                return sum + released.reduce((s, m) => s + m.amount * 0.9, 0);
+              }, 0)
             : 0,
         });
       } catch { /* ignore */ }
