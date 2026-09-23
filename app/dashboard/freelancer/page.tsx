@@ -15,7 +15,7 @@ interface Stats {
 }
 
 function FreelancerDashboardContent() {
-  const [user, setUser] = useState<{ fullName: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; fullName: string; email: string } | null>(null);
   const [stats, setStats] = useState<Stats>({
     totalProposals: 0,
     activeProposals: 0,
@@ -109,7 +109,8 @@ function FreelancerDashboardContent() {
     { label: "My Contracts", href: "/dashboard/freelancer/contracts", icon: "📑", desc: "Manage active work and milestones" },
     { label: "Messages", href: "/dashboard/freelancer/messages", icon: "💬", desc: "Chat with clients" },
     { label: "Invitations", href: "/dashboard/freelancer/invitations", icon: "✉️", desc: "View project invitations" },
-    { label: "Find Clients", href: "/freelancers", icon: "👥", desc: "Explore the freelancer community" },
+    { label: "Edit My Profile", href: "/dashboard/freelancer/profile/edit", icon: "✏️", desc: "Update your skills, portfolio & overview" },
+    { label: "View Public Profile", href: user?.id ? `/freelancers/${user.id}` : "/freelancers", icon: "👤", desc: "See how clients see your profile" },
   ];
 
   return (
