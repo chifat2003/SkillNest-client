@@ -41,10 +41,10 @@ export default function Navbar() {
       className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
         scrolled
           ? "border-white/10 bg-[#0a0a0f]/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
-          : "border-transparent bg-transparent"
+          : "border-transparent bg-[#0a0a0f]/80 backdrop-blur-xl"
       }`}
     >
-      <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-6 px-6">
+      <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-8 px-6">
 
         {/* Logo */}
         <Link
@@ -61,7 +61,7 @@ export default function Navbar() {
         {/* Desktop Nav Links */}
         <nav className="hidden lg:flex items-center justify-center gap-0.5 flex-1" aria-label="Main navigation">
           {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href || (link.href === "/" && pathname === "/");
+            const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
