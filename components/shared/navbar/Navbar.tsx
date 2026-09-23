@@ -2,20 +2,50 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { NAV_LINKS } from "@/constants/navlinks";
+
+type NavbarUser = {
+  role?: string;
+  userType?: string;
+};
+
+const readStoredUser = (): NavbarUser | null => {
+  if (typeof window === "undefined") return null;
+
+  const stored = localStorage.getItem("user");
+  if (!stored) return null;
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+};
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<NavbarUser | null>(() => readStoredUser());
+
+  const dashboardHref = useMemo(() => {
+    const role = user?.role || user?.userType;
+    return role === "Client" ? "/dashboard/client" : "/dashboard/freelancer";
+  }, [user]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    toast.success("Logged out successfully.");
+    router.push("/auth/login");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-8 px-6">
-        
-        {/* Logo */}
         <Link
           href="/"
           id="navbar-logo"
@@ -27,42 +57,32 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav Links */}
         <nav className="hidden lg:flex items-center justify-center gap-0.5 flex-1" aria-label="Main navigation">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href || (link.href === "/" && pathname === "/");
+
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                id={`nav-link-${link.label.toLowerCase()}`}
+                id={`nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isActive
-=======
-                id={`nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-                className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${isActive
->>>>>>> Stashed changes
                     ? "text-white bg-[#7c6aff]/10"
                     : "text-[#9090aa] hover:text-white hover:bg-white/5"
-                  }`}
+                }`}
               >
                 {link.label}
                 <span
-<<<<<<< Updated upstream
                   className={`absolute -bottom-[1px] left-1/2 h-[2px] w-[60%] -translate-x-1/2 rounded-full bg-gradient-to-r from-[#7c6aff] to-[#ff6a9e] transition-transform duration-300 ease-out ${
                     isActive ? "scale-x-100" : "scale-x-0"
                   }`}
-=======
-                  className={`absolute -bottom-[1px] left-1/2 h-[2px] w-[60%] -translate-x-1/2 rounded-full bg-gradient-to-r from-[#7c6aff] to-[#ff6a9e] transition-transform duration-300 ease-out ${isActive ? "scale-x-100" : "scale-x-0"
-                    }`}
->>>>>>> Stashed changes
                 />
               </Link>
             );
           })}
         </nav>
 
-        {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-3 flex-shrink-0">
           {user ? (
             <>
@@ -100,7 +120,6 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Hamburger Toggle */}
         <button
           id="navbar-menu-toggle"
           className="lg:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded-md hover:bg-white/10 transition-colors"
@@ -114,34 +133,26 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       <div
-        className={`md:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${
-          menuOpen ? "max-h-96 opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
+        className={`lg:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${
+          menuOpen ? "max-h-[600px] opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
         }`}
-=======
-        className={`lg:hidden overflow-hidden bg-[#0d0d14]/95 border-t border-white/10 backdrop-blur-xl transition-all duration-300 ease-in-out ${menuOpen ? "max-h-[600px] opacity-100 px-6 py-4" : "max-h-0 opacity-0 px-6 py-0"
-          }`}
->>>>>>> Stashed changes
         aria-hidden={!menuOpen}
       >
         <nav className="flex flex-col gap-1 mb-4" aria-label="Mobile navigation">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
+
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                id={`mobile-nav-link-${link.label.toLowerCase()}`}
+                id={`mobile-nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
                   isActive
-=======
-                id={`mobile-nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-                className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${isActive
->>>>>>> Stashed changes
                     ? "text-white bg-[#7c6aff]/10"
                     : "text-[#9090aa] hover:text-white hover:bg-white/5"
-                  }`}
+                }`}
                 onClick={() => setMenuOpen(false)}
               >
                 {link.label}
@@ -162,7 +173,10 @@ export default function Navbar() {
                 Dashboard
               </Link>
               <button
-                onClick={() => { setMenuOpen(false); handleLogout(); }}
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogout();
+                }}
                 className="flex-1 py-2.5 text-center text-sm font-medium text-[#9090aa] rounded-lg border border-white/10 hover:text-white hover:bg-white/5 transition-colors"
               >
                 Log Out

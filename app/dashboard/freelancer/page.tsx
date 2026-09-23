@@ -17,12 +17,12 @@ function FreelancerDashboardContent() {
   const [stats, setStats] = useState<Stats>({ totalProposals: 0, activeProposals: 0, pendingInvitations: 0 });
 
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
-    }
+    void Promise.resolve().then(async () => {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+      }
 
-    const fetchStats = async () => {
       try {
         const token = localStorage.getItem("token");
         const [proposalsRes, invitationsRes] = await Promise.all([
@@ -31,26 +31,21 @@ function FreelancerDashboardContent() {
         ]);
         const [proposalsData, invitationsData] = await Promise.all([proposalsRes.json(), invitationsRes.json()]);
 
-        if (proposalsData.success) {
-          const proposals = proposalsData.data;
-          setStats((prev) => ({
-            ...prev,
-            totalProposals: proposalsData.pagination?.total ?? proposals.length,
-            activeProposals: proposals.filter((p: { status: string }) =>
-              ["Submitted", "Viewed", "Shortlisted", "Interview"].includes(p.status)
-            ).length,
-          }));
-        }
-        if (invitationsData.success) {
-          setStats((prev) => ({
-            ...prev,
-            pendingInvitations: invitationsData.data.filter((i: { status: string }) => i.status === "Pending").length,
-          }));
-        }
+        setStats({
+          totalProposals: proposalsData.success
+            ? proposalsData.pagination?.total ?? proposalsData.data.length
+            : 0,
+          activeProposals: proposalsData.success
+            ? proposalsData.data.filter((p: { status: string }) =>
+                ["Submitted", "Viewed", "Shortlisted", "Interview"].includes(p.status)
+              ).length
+            : 0,
+          pendingInvitations: invitationsData.success
+            ? invitationsData.data.filter((i: { status: string }) => i.status === "Pending").length
+            : 0,
+        });
       } catch { /* ignore */ }
-    };
-
-    fetchStats();
+    });
   }, []);
 
   const cards = [
