@@ -1,3 +1,4 @@
+import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
@@ -15,11 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SkillNest – Learn. Grow. Excel.",
-  description: "SkillNest is an online learning platform with expert-led courses to help you master new skills and advance your career.",
+  title: "SkillNest – AI-Powered Freelance Marketplace",
+  description: "Connect with top freelancers and clients worldwide. AI-powered matching, secure milestone payments, and real-time collaboration.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"

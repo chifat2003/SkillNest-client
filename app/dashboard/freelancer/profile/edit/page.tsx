@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -629,7 +629,9 @@ function EditProfileContent() {
 export default function EditProfilePage() {
   return (
     <ProtectedRoute allowedRoles={["Freelancer"]}>
-      <EditProfileContent />
+      <Suspense fallback={<div className="min-h-screen bg-[#08080d] flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#7c6aff]" /></div>}>
+        <EditProfileContent />
+      </Suspense>
     </ProtectedRoute>
   );
 }

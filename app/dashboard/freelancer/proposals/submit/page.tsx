@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import toast from "react-hot-toast";
@@ -140,7 +140,9 @@ function SubmitProposalForm() {
 export default function SubmitProposalPage() {
   return (
     <ProtectedRoute allowedRoles={["Freelancer"]}>
-      <SubmitProposalForm />
+      <Suspense fallback={<div className="min-h-screen bg-[#08080d] flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#7c6aff]" /></div>}>
+        <SubmitProposalForm />
+      </Suspense>
     </ProtectedRoute>
   );
 }
