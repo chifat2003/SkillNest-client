@@ -22,41 +22,43 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userJson = localStorage.getItem("user");
+    void Promise.resolve().then(() => {
+      const token = localStorage.getItem("token");
+      const userJson = localStorage.getItem("user");
 
-    // 1. Check if token and user exist
-    if (!token || !userJson) {
-      router.replace("/auth/login");
-      return;
-    }
-
-    try {
-      const user: User = JSON.parse(userJson);
-
-      // 2. Validate role against allowedRoles
-      if (allowedRoles && allowedRoles.length > 0) {
-        if (!allowedRoles.includes(user.role)) {
-          // Redirect unauthorized user to their respective home route
-          if (user.role === "Client") {
-            router.replace("/dashboard/client");
-          } else if (user.role === "Freelancer") {
-            router.replace("/dashboard/freelancer");
-          } else {
-            router.replace("/auth/login");
-          }
-          return;
-        }
+      // 1. Check if token and user exist
+      if (!token || !userJson) {
+        router.replace("/auth/login");
+        return;
       }
 
-      // 3. User is authenticated and authorized
-      setIsAuthorized(true);
-    } catch (error) {
-      console.error("Auth Guard Error:", error);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      router.replace("/auth/login");
-    }
+      try {
+        const user: User = JSON.parse(userJson);
+
+        // 2. Validate role against allowedRoles
+        if (allowedRoles && allowedRoles.length > 0) {
+          if (!allowedRoles.includes(user.role)) {
+            // Redirect unauthorized user to their respective home route
+            if (user.role === "Client") {
+              router.replace("/dashboard/client");
+            } else if (user.role === "Freelancer") {
+              router.replace("/dashboard/freelancer");
+            } else {
+              router.replace("/auth/login");
+            }
+            return;
+          }
+        }
+
+        // 3. User is authenticated and authorized
+        setIsAuthorized(true);
+      } catch (error) {
+        console.error("Auth Guard Error:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        router.replace("/auth/login");
+      }
+    });
   }, [router, allowedRoles]);
 
   if (!isAuthorized) {

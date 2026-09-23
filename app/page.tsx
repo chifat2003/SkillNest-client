@@ -6,7 +6,7 @@ import {
   FaBrain, FaBolt, FaShieldAlt, FaStar, FaCheckCircle,
   FaChevronDown, FaChevronUp, FaSearch, FaRocket, FaUsers,
   FaCode, FaPalette, FaPenNib, FaChartLine, FaMobileAlt,
-  FaArrowRight, FaPlay, FaQuoteLeft, FaGlobe, FaClock,
+  FaArrowRight, FaQuoteLeft, FaGlobe, FaClock,
   FaLock, FaAward, FaThumbsUp, FaDollarSign,
 } from "react-icons/fa";
 import { MdAutoAwesome, MdVerified } from "react-icons/md";
@@ -518,7 +518,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {AI_FEATURES.map((feat, i) => (
+            {AI_FEATURES.map((feat) => (
               <div
                 key={feat.title}
                 className="group relative glass-card rounded-2xl p-6 border border-white/5 hover:border-white/10 hover:-translate-y-2 transition-all duration-300 overflow-hidden"
