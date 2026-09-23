@@ -31,23 +31,17 @@ export default function Navbar() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<{ role: string; fullName: string } | null>(null);
-
-  // Notifications state
-  const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [notifLoading, setNotifLoading] = useState(false);
-  const notifRef = useRef<HTMLDivElement>(null);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Hydrate user from localStorage once on mount
-  useEffect(() => {
+  const [user, setUser] = useState<{ role: string; fullName: string } | null>(() => {
+    if (typeof window === "undefined") return null;
     const stored = localStorage.getItem("user");
-    if (stored) {
-      try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+    if (!stored) return null;
+
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return null;
     }
-  }, []);
+  });
 
   // Scroll listener
   useEffect(() => {
